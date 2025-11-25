@@ -65,6 +65,8 @@ def isolate_cards(image_path, rectangles):
         [0, card_h - 1]           #bottom-left
     ], dtype="float32")
 
+    cardImages = []
+
     for i, rect in enumerate(rectangles):
         corners = np.array(rect, dtype="float32")
 
@@ -81,5 +83,7 @@ def isolate_cards(image_path, rectangles):
         M = cv2.getPerspectiveTransform(ordered_corners, transformation)
         warped = cv2.warpPerspective(img, M, (card_w, card_h))
 
-        cv2.imwrite(f"output/cards/card{i+1}.jpg", warped)
-        #eventually we'll pass the card to the next function, instead of saving it
+        # cv2.imwrite(f"output/cards/card{i+1}.jpg", warped)
+        cardImages.append(warped)
+    
+    return cardImages

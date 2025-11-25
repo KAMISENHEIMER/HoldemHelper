@@ -24,7 +24,7 @@ def load_templates():
             filename = os.path.basename(path)
             
             #remove suffixes (for multiple versions/fonts of template)
-            label = filename.split('_')[0]
+            label = filename.split('_')[0].split('.')[0]
             
             img = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
             target_list.append((label, img))
@@ -88,27 +88,13 @@ def classify_card(card_img):
     return rank, suit, r_score, s_score
 
 #setup
-def classify_cards(card_paths, template_dir="templates"):
+def classify_cards(cards):
     global CLASS_RANK_TEMPLATES, CLASS_SUIT_TEMPLATES
     CLASS_RANK_TEMPLATES, CLASS_SUIT_TEMPLATES = load_templates()
 
     results = []
-    for path in card_paths:
-        card_img = cv2.imread(path)
-        filename = os.path.basename(path)
+    for card in cards:
+        rank, suit, rs, ss = classify_card(card)
 
-        rank, suit, rs, ss = classify_card(card_img)
-
-        results.append((filename, rank, suit, rs, ss))
+        results.append((rank, suit, rs, ss))
     return results
-
-#temp testing until moved into main
-if __name__ == "__main__":
-    card_paths = sorted(glob.glob("output/cards/*.jpg"))
-
-    results = classify_cards(card_paths)
-
-    print(f"{'FILENAME':<15} {'RANK':<6} {'SUIT':<8} {'RANK-SCORE':<12} {'SUIT-SCORE'}")
-    print("-" * 60)
-    for filename, rank, suit, rs, ss in results:
-        print(f"{filename:<15} {rank:<6} {suit:<8} {rs:.2f}       {ss:.2f}")
