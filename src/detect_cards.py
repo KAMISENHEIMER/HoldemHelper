@@ -21,13 +21,26 @@ def detect_rectangles(image_path):
     if img is None:
         raise ValueError("Failed to load image")
 
+    #resize image for consistency
+    target_width = 600
+    scale = target_width / img.shape[1] #keep scale for later use
+    dim = (target_width, int(img.shape[0] * scale))
+    resized = cv2.resize(img, dim, interpolation=cv2.INTER_AREA)
+
     #grayscale and blur image for less noise
-    grayscale = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    blur = cv2.GaussianBlur(grayscale, (5, 5), 0)
+    grayscale = cv2.cvtColor(resized, cv2.COLOR_BGR2GRAY)
+    # blur = cv2.GaussianBlur(grayscale, (5, 5), 0)
+    
+    #bilateral filter to reduce noise while keeping sharp edges (card edges)
+    blur = cv2.bilateralFilter(grayscale, 9, 75, 75)    
 
     #canny edge detection
     edges = cv2.Canny(blur, 50, 150)
     cv2.imwrite("output/edges.jpg", edges) #output edges for debugging
+
+    #dilate to help reconnect edges
+    kernel = np.ones((3,3), np.uint8)
+    edges = cv2.dilate(edges, kernel, iterations=1)
 
     #find contours from edges
     contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
@@ -47,7 +60,8 @@ def detect_rectangles(image_path):
 
         #return polygons with 4 corners (rectangles)
         if len(approx) == 4:
-            corners = [(pt[0][0], pt[0][1]) for pt in approx]
+            #found corners, scale them back up
+            corners = [(pt[0][0] / scale, pt[0][1] / scale) for pt in approx]
             rectangles.append(corners)
 
     return rectangles
@@ -61,12 +75,12 @@ if __name__ == "__main__":
     image_path = "test_images/5cardswithclutter.png"
     # image_path = "test_images/3cardswithclutter.png" #failure case, chip on card
     # image_path = "test_images/5cardswithhands.png" #failure case, stylized background
-    # image_path = "test_images/boonecards4.png"
+    # image_path = "test_images/boonecards.png"
     
     #detect rectangles in image
     rects = detect_rectangles(image_path)
 
-    #prints out detected rectangles
+    # prints out detected rectangles
     # print("Rectangles detected:", len(rects))
     # for i, rect in enumerate(rects):
     #     print(f"Rectangle {i+1} corners:", rect)
