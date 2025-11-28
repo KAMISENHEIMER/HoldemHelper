@@ -40,7 +40,8 @@ def detect_rectangles(image):
 
     #canny edge detection
     edges = cv2.Canny(blur, 50, 150)
-    cv2.imwrite("output/edges.jpg", edges) #output edges for debugging
+
+    # cv2.imwrite("output/edges.jpg", edges) #output edges for debugging
 
     #dilate to help reconnect edges
     kernel = np.ones((3,3), np.uint8)

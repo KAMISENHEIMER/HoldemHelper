@@ -22,12 +22,11 @@ RANK_MAP = {
 def format_cards(cards):
     return "".join([RANK_MAP.get(rank) + suit[0] for rank, suit, rs, ss in cards])
 
-def calculate_odds(num_players, player_cards, river_cards):
+def calculate_odds(num_players, player_cards, river_cards, num_simulations=10000):
     # num_players = 2
     # player_cards = 'AsAh'
     # river_cards = 'Kc8h8d'
     # river_cards = ''
-    num_simulations = 10000
 
     with ProcessPoolExecutor() as executor:
         results = calculate_hand_strength(

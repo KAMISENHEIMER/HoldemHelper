@@ -27,7 +27,7 @@ if __name__ == "__main__":
     #     print(f"Rectangle {i+1} corners:", rect)
 
     #draw detected rectangles on image - DEBUG
-    draw_rectangles(image_path, river_rects)
+    # draw_rectangles(image_path, river_rects)
 
     #form isolated cards
     river_card_images = isolate_cards(river_image, river_rects)
@@ -49,8 +49,12 @@ if __name__ == "__main__":
     formatted_river = format_cards(river_guesses)
     formatted_hand = format_cards(hand_guesses)
 
-    odds = calculate_odds(2, formatted_hand, formatted_river)
-    print(f"Chance of winning: {odds:.4f}")
+    num_players = 2
+    num_simulations = 10000
+
+    odds = calculate_odds(num_players, formatted_hand, formatted_river, num_simulations)
+
+    print(f"CHANCE OF WINNING: {odds*100:.2f}%")
 
 
 
