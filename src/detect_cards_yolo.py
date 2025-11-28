@@ -73,7 +73,7 @@ def rescale_stretch(image, size=(640, 640)):
     return cv2.resize(image, size, interpolation=cv2.INTER_LINEAR)
 
 #turn card detections into a set of cards
-def format_cards(detections):
+def format_cards_from_yolo(detections):
     cards = []
     for detection in detections:
 
@@ -90,12 +90,14 @@ def format_cards(detections):
             #format like 'Ah' (Ace of Hearts)
             card = card[0] + card[1].lower()
 
-        #make second letter (suit) lowercase
         cards.append(card)
     
     #remove duplicates
     cards = list(set(cards))
     
+    #convert to string
+    cards = "".join(cards)
+
     return cards
 
 if __name__ == "__main__":
@@ -112,7 +114,7 @@ if __name__ == "__main__":
     for d in detections:
         print(d)
 
-    cards = format_cards(detections)
+    cards = format_cards_from_yolo(detections)
     print("Detected cards:", cards)
 
 

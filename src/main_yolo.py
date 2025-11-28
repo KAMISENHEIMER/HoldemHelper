@@ -2,7 +2,7 @@ from detect_cards import detect_rectangles, draw_rectangles, split
 from isolate_cards import isolate_cards
 from template_matching import classify_cards
 from poker_odds import format_cards, calculate_odds
-from detect_cards_yolo import detect_cards
+from detect_cards_yolo import detect_cards, format_cards_from_yolo, draw_detections
 
 if __name__ == "__main__":
     import sys
@@ -43,17 +43,14 @@ if __name__ == "__main__":
     river_guesses = detect_cards(river_image)
     hand_guesses = detect_cards(hand_image)
 
+    formatted_river = format_cards_from_yolo(river_guesses)
+    formatted_hand = format_cards_from_yolo(hand_guesses)
+
     #ouput results
     print("RIVER" + "-" * 60)
-    for card in river_guesses:
-        print(card + "\t")
+    print(formatted_river)
     print("HAND" + "-" * 60)
-    for card in hand_guesses:
-        print(card + "\t")
-
-    
-    formatted_river = format_cards(river_guesses)
-    formatted_hand = format_cards(hand_guesses)
+    print(formatted_hand)
 
     odds = calculate_odds(num_players, formatted_hand, formatted_river, num_simulations)
 
