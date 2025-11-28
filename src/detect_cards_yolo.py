@@ -72,9 +72,35 @@ def rescale_letterbox(img, new_shape=(640, 640), color=(114, 114, 114)):
 def rescale_stretch(image, size=(640, 640)):
     return cv2.resize(image, size, interpolation=cv2.INTER_LINEAR)
 
+#turn card detections into a set of cards
+def format_cards(detections):
+    cards = []
+    for detection in detections:
+
+        #filter out low confidence
+        if detection['confidence'] < 0.4:
+            continue
+
+        card = detection['class_name']
+
+        #handle '10' (pokerkit needs 'T')
+        if detection['class_name'][0] == '1':
+            card = 'T' + detection['class_name'][2].lower()
+        else:
+            #format like 'Ah' (Ace of Hearts)
+            card = card[0] + card[1].lower()
+
+        #make second letter (suit) lowercase
+        cards.append(card)
+    
+    #remove duplicates
+    cards = list(set(cards))
+    
+    return cards
+
 if __name__ == "__main__":
 
-    image_path = "test_images/boonecards3.png"
+    image_path = "test_images/riverandhand.png"
     image = cv2.imread(image_path)
 
     detections = detect_cards(image)
@@ -83,7 +109,10 @@ if __name__ == "__main__":
     draw_detections(image_path, detections)
 
     # print("Detections:")
-    # for d in detections:
-    #     print(d)
+    for d in detections:
+        print(d)
+
+    cards = format_cards(detections)
+    print("Detected cards:", cards)
 
 
