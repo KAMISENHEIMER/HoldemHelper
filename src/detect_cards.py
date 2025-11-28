@@ -12,20 +12,24 @@ def draw_rectangles(image_path, rectangles):
 
     cv2.imwrite("output/contours.jpg", img)
 
+#helper for splitting river and hand areas
+def split(image_path):
+    img = cv2.imread(image_path)
+    height, width, _ = img.shape
+
+    river = img[0:height//2, 0:width]
+    hand = img[height//2:height, 0:width]
+
+    return river, hand
 
 #main function for detecting possible cards in the image
-def detect_rectangles(image_path):
-
-    #load image 
-    img = cv2.imread(image_path)
-    if img is None:
-        raise ValueError("Failed to load image")
+def detect_rectangles(image):
 
     #resize image for consistency
     target_width = 600
-    scale = target_width / img.shape[1] #keep scale for later use
-    dim = (target_width, int(img.shape[0] * scale))
-    resized = cv2.resize(img, dim, interpolation=cv2.INTER_AREA)
+    scale = target_width / image.shape[1] #keep scale for later use
+    dim = (target_width, int(image.shape[0] * scale))
+    resized = cv2.resize(image, dim, interpolation=cv2.INTER_AREA)
 
     #grayscale and blur image for less noise
     grayscale = cv2.cvtColor(resized, cv2.COLOR_BGR2GRAY)
