@@ -5,6 +5,8 @@ from poker_odds import format_cards, calculate_odds
 
 if __name__ == "__main__":
     import sys
+    import argparse
+    import os
 
     #example images
     # image_path = "test_images/5cardsbasic.png"
@@ -13,7 +15,26 @@ if __name__ == "__main__":
     # image_path = "test_images/5cardswithhands.png" #failure case, stylized background
     # image_path = "test_images/boonecards4.png"
     # image_path = "test_images/onlinepoker.PNG"
-    image_path = "test_images/riverandhand.PNG"
+    # image_path = "test_images/riverandhand.PNG"
+
+    #command line input
+    parser = argparse.ArgumentParser()
+    parser.add_argument("image_path", help="Path to image file")
+    parser.add_argument("num_players", type=int, help="Number of players")
+    parser.add_argument("--sims", type=int, default=10000, help="Number of simulations")
+    
+    args = parser.parse_args()
+    image_path = args.image_path
+    num_players = args.num_players
+    num_simulations = args.sims
+
+    #error checking
+    if not os.path.exists(image_path):
+        sys.exit(f"Error: Image file '{args.image_path}' not found.")
+    if num_players < 2:
+        sys.exit("Error: Number of players must be at least 2")
+    if num_simulations < 1:
+        sys.exit("Error: Number of simulations must be at least 1")
 
     river_image, hand_image = split(image_path)
     
@@ -48,9 +69,6 @@ if __name__ == "__main__":
 
     formatted_river = format_cards(river_guesses)
     formatted_hand = format_cards(hand_guesses)
-
-    num_players = 2
-    num_simulations = 10000
 
     odds = calculate_odds(num_players, formatted_hand, formatted_river, num_simulations)
 
