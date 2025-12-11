@@ -95,9 +95,6 @@ def format_cards_from_yolo(detections):
     #remove duplicates
     cards = list(set(cards))
     
-    #convert to string
-    cards = "".join(cards)
-
     return cards
 
 if __name__ == "__main__":

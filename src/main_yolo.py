@@ -46,13 +46,21 @@ if __name__ == "__main__":
     formatted_river = format_cards_from_yolo(river_guesses)
     formatted_hand = format_cards_from_yolo(hand_guesses)
 
+    #exit if incorrect amount of cards detected (river between 3 and 5, hand is 2)
+    if not (3 <= len(formatted_river) <= 5) or len(formatted_hand) != 2:
+        sys.exit("Error: Incorrect number of cards detected. Please try again with a different image.")
+
+
+    river_string = "".join(formatted_river)
+    hand_string = "".join(formatted_hand)
+
     #ouput results
     print("RIVER" + "-" * 60)
-    print(formatted_river)
+    print(river_string)
     print("HAND" + "-" * 60)
-    print(formatted_hand)
+    print(hand_string)
 
-    odds = calculate_odds(num_players, formatted_hand, formatted_river, num_simulations)
+    odds = calculate_odds(num_players, hand_string, river_string, num_simulations)
 
     print(f"CHANCE OF WINNING: {odds*100:.2f}%")
 
